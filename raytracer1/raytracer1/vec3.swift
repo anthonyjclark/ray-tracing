@@ -64,6 +64,11 @@ extension Vec3 {
         return getRandomInUnitSphere().getUnit()
     }
     
+    static func getRandomInHemisphere(normal: Vec3) -> Vec3 {
+        let inUnitSphere = Vec3.getRandomInUnitSphere()
+        return dot(a: inUnitSphere, b: normal) > 0 ? inUnitSphere : -inUnitSphere
+    }
+    
     static prefix func - (vec: Vec3) -> Vec3 {
         return Vec3(i: -vec.i, j: -vec.j, k: -vec.k)
     }

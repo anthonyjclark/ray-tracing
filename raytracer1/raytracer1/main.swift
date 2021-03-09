@@ -31,7 +31,9 @@ func rayColor(ray: Ray, world: Hittable, depth: Int) -> Color {
     
     // Use tmin=0.001 to solve "Acne" problem
     if let hitRecord = world.hit(ray: ray, tmin: 0.001, tmax: .infinity) {
-        let target = hitRecord.point + hitRecord.normal + Vec3.getRandomInUnitSphere()
+        //let target = hitRecord.point + hitRecord.normal + Vec3.getRandomInUnitSphere()
+        let target = hitRecord.point + hitRecord.normal + Vec3.getRandomUnitVector()
+        //let target = hitRecord.point + Vec3.getRandomInHemisphere(normal: hitRecord.normal)
         let newRay = Ray(origin: hitRecord.point, direction: target - hitRecord.point)
         return 0.5 * rayColor(ray: newRay, world: world, depth: depth - 1)
     }

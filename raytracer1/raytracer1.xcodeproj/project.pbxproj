@@ -73,11 +73,11 @@
 				8ACF11A325959BD200E6D7AD /* main.swift */,
 				8ACF11AB2595A4B100E6D7AD /* vec3.swift */,
 				8ACF11AE2596A6FE00E6D7AD /* ray.swift */,
-				8A01112725F4622B003C440B /* README.md */,
 				8A01112825F463E3003C440B /* hittable.swift */,
 				8A01112C25F46860003C440B /* sphere.swift */,
 				8A01112F25F5920F003C440B /* hittableList.swift */,
 				8A01113325F59FAB003C440B /* camera.swift */,
+				8A01112725F4622B003C440B /* README.md */,
 			);
 			path = raytracer1;
 			sourceTree = "<group>";
