@@ -1,5 +1,5 @@
 //
-//  ray.swift
+//  Ray.swift
 //  raytracer1
 //
 //  Created by Anthony Clark on 12/25/20.
@@ -7,7 +7,7 @@
 
 struct Ray {
     let origin: Point
-    let direction: Vec3
+    let direction: Vec
 }
 
 extension Ray {

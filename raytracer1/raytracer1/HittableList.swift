@@ -1,5 +1,5 @@
 //
-//  hittableList.swift
+//  HittableList.swift
 //  raytracer1
 //
 //  Created by Anthony Clark on 3/7/21.

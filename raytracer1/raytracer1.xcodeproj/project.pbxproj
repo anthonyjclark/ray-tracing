@@ -11,8 +11,9 @@
 		8A01112D25F46860003C440B /* sphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A01112C25F46860003C440B /* sphere.swift */; };
 		8A01113025F5920F003C440B /* hittableList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A01112F25F5920F003C440B /* hittableList.swift */; };
 		8A01113425F59FAB003C440B /* camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A01113325F59FAB003C440B /* camera.swift */; };
+		8A610BF52605A03C0081FD04 /* Vec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A610BF42605A03C0081FD04 /* Vec.swift */; };
+		8AC5BD6526058D7B0016848D /* Material.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC5BD6426058D7B0016848D /* Material.swift */; };
 		8ACF11A425959BD200E6D7AD /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACF11A325959BD200E6D7AD /* main.swift */; };
-		8ACF11AC2595A4B100E6D7AD /* vec3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACF11AB2595A4B100E6D7AD /* vec3.swift */; };
 		8ACF11AF2596A6FE00E6D7AD /* ray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACF11AE2596A6FE00E6D7AD /* ray.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,9 +35,10 @@
 		8A01112C25F46860003C440B /* sphere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sphere.swift; sourceTree = "<group>"; };
 		8A01112F25F5920F003C440B /* hittableList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = hittableList.swift; sourceTree = "<group>"; };
 		8A01113325F59FAB003C440B /* camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = camera.swift; sourceTree = "<group>"; };
+		8A610BF42605A03C0081FD04 /* Vec.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vec.swift; sourceTree = "<group>"; };
+		8AC5BD6426058D7B0016848D /* Material.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Material.swift; sourceTree = "<group>"; };
 		8ACF11A025959BD200E6D7AD /* raytracer1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = raytracer1; sourceTree = BUILT_PRODUCTS_DIR; };
 		8ACF11A325959BD200E6D7AD /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		8ACF11AB2595A4B100E6D7AD /* vec3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vec3.swift; sourceTree = "<group>"; };
 		8ACF11AE2596A6FE00E6D7AD /* ray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ray.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,14 +72,15 @@
 		8ACF11A225959BD200E6D7AD /* raytracer1 */ = {
 			isa = PBXGroup;
 			children = (
-				8ACF11A325959BD200E6D7AD /* main.swift */,
-				8ACF11AB2595A4B100E6D7AD /* vec3.swift */,
-				8ACF11AE2596A6FE00E6D7AD /* ray.swift */,
-				8A01112825F463E3003C440B /* hittable.swift */,
-				8A01112C25F46860003C440B /* sphere.swift */,
-				8A01112F25F5920F003C440B /* hittableList.swift */,
-				8A01113325F59FAB003C440B /* camera.swift */,
 				8A01112725F4622B003C440B /* README.md */,
+				8A01113325F59FAB003C440B /* camera.swift */,
+				8A01112825F463E3003C440B /* hittable.swift */,
+				8A01112F25F5920F003C440B /* hittableList.swift */,
+				8ACF11A325959BD200E6D7AD /* main.swift */,
+				8AC5BD6426058D7B0016848D /* Material.swift */,
+				8ACF11AE2596A6FE00E6D7AD /* ray.swift */,
+				8A01112C25F46860003C440B /* sphere.swift */,
+				8A610BF42605A03C0081FD04 /* Vec.swift */,
 			);
 			path = raytracer1;
 			sourceTree = "<group>";
@@ -139,8 +142,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8AC5BD6526058D7B0016848D /* Material.swift in Sources */,
 				8A01113025F5920F003C440B /* hittableList.swift in Sources */,
-				8ACF11AC2595A4B100E6D7AD /* vec3.swift in Sources */,
+				8A610BF52605A03C0081FD04 /* Vec.swift in Sources */,
 				8A01112D25F46860003C440B /* sphere.swift in Sources */,
 				8ACF11AF2596A6FE00E6D7AD /* ray.swift in Sources */,
 				8A01112925F463E3003C440B /* hittable.swift in Sources */,

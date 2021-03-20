@@ -1,5 +1,5 @@
 //
-//  camera.swift
+//  Camera.swift
 //  raytracer1
 //
 //  Created by Anthony Clark on 3/7/21.
@@ -9,8 +9,8 @@ import Foundation
 
 struct Camera {
     let origin: Point
-    let horizontal: Vec3
-    let vertical: Vec3
+    let horizontal: Vec
+    let vertical: Vec
     let lowerLeftCorner: Point
 
     init () {

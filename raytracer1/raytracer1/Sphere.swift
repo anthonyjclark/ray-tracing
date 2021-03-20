@@ -1,5 +1,5 @@
 //
-//  sphere.swift
+//  Sphere.swift
 //  raytracer1
 //
 //  Created by Anthony Clark on 3/6/21.
@@ -10,6 +10,7 @@ import Foundation
 struct Sphere: Hittable {
     let center: Point
     let radius: Scalar
+    let material: Material
     
     func hit(ray: Ray, tmin: Scalar, tmax: Scalar) -> HitRecord? {
         let centerToOrigin = ray.origin - center
@@ -41,7 +42,8 @@ struct Sphere: Hittable {
             point: point,
             normal: frontFace ? outwardNormal : -outwardNormal,
             frontFace: frontFace,
-            tval: root
+            tval: root,
+            material: material
         )
     }
 }
