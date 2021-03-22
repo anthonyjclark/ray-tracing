@@ -7,6 +7,8 @@
 
 // TODO: Try SIMD Vectors
 
+import Foundation
+
 typealias Scalar = Double
 
 // Add clamping to Scalar
@@ -71,7 +73,15 @@ extension Vec {
     
     static func getRandomInHemisphere(normal: Vec) -> Vec {
         let inUnitSphere = Vec.getRandomInUnitSphere()
-        return dot(a: inUnitSphere, b: normal) > 0 ? inUnitSphere : -inUnitSphere
+        return dot(inUnitSphere, normal) > 0 ? inUnitSphere : -inUnitSphere
+    }
+    
+    static func getRandomInUnitDisk() -> Vec {
+        while true {
+            let p = Vec(i: Scalar.random(in: -1 ... 1), j: Scalar.random(in: -1 ... 1), k: 0)
+            if p.lengthSquared() >= 1 { continue }
+            return p
+        }
     }
     
     static prefix func - (vec: Vec) -> Vec {
@@ -107,18 +117,32 @@ extension Vec {
     }
 }
 
-func dot(a: Vec, b: Vec) -> Scalar {
+extension Vec: CustomStringConvertible {
+    var description: String {
+        return String(format: "%.3f, %.3f, %.3f", i, j, k)
+    }
+}
+
+func dot(_ a: Vec, _ b: Vec) -> Scalar {
     return a.i * b.i + a.j * b.j + a.k * b.k
 }
 
+func cross(_ u: Vec, _ v: Vec) -> Vec {
+    return Vec(
+        i: u.j * v.k - u.k * v.j,
+        j: u.k * v.i - u.i * v.k,
+        k: u.i * v.j - u.j * v.i);
+}
+
+
 func reflect(v: Vec, n: Vec) -> Vec {
-    return v - 2 * dot(a: v, b: n) * n
+    return v - 2 * dot(v, n) * n
 }
 
 func refract(uv: Vec, n: Vec, etaiOverEtat: Scalar) -> Vec {
-    let cosTheta = min(dot(a: -uv, b: n), 1.0)
+    let cosTheta = dot(-uv, n)//min(dot(a: -uv, b: n), 1.0)
     let rOutPerp = etaiOverEtat * (uv + cosTheta * n)
-    let rOutPara = -abs(1 - rOutPerp.lengthSquared()).squareRoot() * n
+    let rOutPara = -sqrt(1 - rOutPerp.lengthSquared())*n//-sqrt(abs(1 - rOutPerp.lengthSquared())) * n
     return rOutPerp + rOutPara
 }
 

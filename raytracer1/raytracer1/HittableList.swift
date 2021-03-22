@@ -23,7 +23,7 @@ class HittableList: Hittable {
         hittables.removeAll()
     }
     
-    func add(hittableItem: Hittable) {
+    func add(_ hittableItem: Hittable) {
         hittables.append(hittableItem)
     }
 

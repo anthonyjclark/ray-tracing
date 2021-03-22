@@ -8,17 +8,17 @@
 import Foundation
 
 protocol Material {
-    func scatter(rayIn: Ray, rec: HitRecord) -> (Color, Ray)?
+    func scatter(ray: Ray, hit: HitRecord) -> (Color, Ray)?
 }
 
 struct Lambertian: Material {
     let albedo: Color
     
-    func scatter(rayIn: Ray, rec: HitRecord) -> (Color, Ray)? {
-        let scatterDirection = rec.normal + Vec.getRandomUnitVector()
+    func scatter(ray: Ray, hit: HitRecord) -> (Color, Ray)? {
+        let scatterDirection = hit.normal + Vec.getRandomUnitVector()
         let scattered = scatterDirection.nearZero()
-            ? Ray(origin: rec.point, direction: rec.normal)
-            : Ray(origin: rec.point, direction: scatterDirection)
+            ? Ray(origin: hit.point, direction: hit.normal)
+            : Ray(origin: hit.point, direction: scatterDirection)
         
         return (albedo, scattered)
     }
@@ -30,11 +30,11 @@ struct Metal: Material {
     let albedo: Color
     let fuzz: Scalar // Should be less than 1
 
-    func scatter(rayIn: Ray, rec: HitRecord) -> (Color, Ray)? {
-        let reflected = reflect(v: rayIn.direction.getUnit(), n: rec.normal)
-        let scattered = Ray(origin: rec.point, direction: reflected + fuzz * Vec.getRandomInUnitSphere())
+    func scatter(ray: Ray, hit: HitRecord) -> (Color, Ray)? {
+        let reflected = reflect(v: ray.direction.getUnit(), n: hit.normal)
+        let scattered = Ray(origin: hit.point, direction: reflected + fuzz * Vec.getRandomInUnitSphere())
         
-        return dot(a: scattered.direction, b: rec.normal) > 0
+        return dot(scattered.direction, hit.normal) > 0
             ? (albedo, scattered)
             : nil
     }
@@ -43,22 +43,23 @@ struct Metal: Material {
 struct Dielectric: Material {
     let indexOfRefraction: Scalar
 
-    func scatter(rayIn: Ray, rec: HitRecord) -> (Color, Ray)? {
-        let attenuation = Color(r: 1, g: 1, b: 1)
-        let refractionRatio = rec.frontFace ? (1.0 / indexOfRefraction) : indexOfRefraction
-        
-        let unitDirection = rayIn.direction.getUnit()
-        let cosTheta = min(dot(a: -unitDirection, b: rec.normal), 1)
-        let sinTheta = (1 - cosTheta * cosTheta).squareRoot()
-        
-        // Commenting out the Schlick approximation until I fix the bug here
-        let cannotRefract = refractionRatio * sinTheta > 1
-        let direction = cannotRefract //|| Dielectric.reflectance(cosine: cosTheta, refIndex: refractionRatio) > Scalar.random(in: 0 ... 1)
-            ? reflect(v: unitDirection, n: rec.normal)
-            : refract(uv: unitDirection, n: rec.normal, etaiOverEtat: refractionRatio)
-        
-        let scattered = Ray(origin: rec.point, direction: direction)
+    func scatter(ray: Ray, hit: HitRecord) -> (Color, Ray)? {
 
+        let attenuation = Color(r: 1, g: 1, b: 1)
+        let refractionRatio = hit.frontFace ? (1.0 / indexOfRefraction) : indexOfRefraction
+        
+        let unitDirection = ray.direction.getUnit()
+        let cosTheta = min(dot(-unitDirection, hit.normal), 1)
+        let sinTheta = sqrt(1 - cosTheta * cosTheta)
+  
+        let cannotRefract = refractionRatio * sinTheta > 1
+        let schlickNumber = Dielectric.reflectance(cosine: cosTheta, refIndex: refractionRatio)
+        let direction = cannotRefract || (schlickNumber > Scalar.random(in: 0 ... 1))
+            ? reflect(v: unitDirection, n: hit.normal)
+            : refract(uv: unitDirection, n: hit.normal, etaiOverEtat: refractionRatio)
+        
+        let scattered = Ray(origin: hit.point, direction: direction)
+        
         return (attenuation, scattered)
     }
     

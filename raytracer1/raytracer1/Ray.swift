@@ -11,7 +11,7 @@ struct Ray {
 }
 
 extension Ray {
-    func at(t: Scalar) -> Point {
+    func at(_ t: Scalar) -> Point {
         return origin + t * direction
     }
 }

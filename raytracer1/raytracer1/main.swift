@@ -17,6 +17,52 @@ public struct StandardErrorOutputStream: TextOutputStream {
 }
 public var stdErr = StandardErrorOutputStream()
 
+//
+// Generate the default scene from the book
+//
+
+func generateRandomScene() -> HittableList {
+    let world = HittableList()
+    
+    let groundMaterial = Lambertian(albedo: Color(r: 0.5, g: 0.5, b: 0.5))
+    world.add(Sphere(center: Point(x: 0, y: -1000, z: 0), radius: 1000, material: groundMaterial))
+
+    for a in -11 ... 11 {
+        for b in -11 ... 11 {
+            let center = Vec(
+                x: Scalar(a) + 0.9*Scalar.random(in: 0...1),
+                y: 0.2,
+                z: Scalar(b) + 0.9*Scalar.random(in: 0...1))
+
+            if (center - Vec(x: 4, y: 0.2, z: 0)).length() < 0.9 {
+                continue
+            }
+
+            var material: Material
+            switch Scalar.random(in: 0...1) {
+            case 0...0.8:
+                let albedo = Color.getRandom()
+                material = Lambertian(albedo: albedo)
+            case 0.8...0.95:
+                let albedo = Color.getRandom(lo: 0.5, hi: 1)
+                let fuzz = Scalar.random(in: 0...0.5)
+                material = Metal(albedo: albedo, fuzz: fuzz)
+            default:
+                material = Dielectric(indexOfRefraction: 1.5)
+            }
+
+            world.add(Sphere(center: center, radius: 0.2, material: material))
+        }
+    }
+    
+    world.add(Sphere(center: Point(x: 0, y: 1, z: 0), radius: 1.0, material: Dielectric(indexOfRefraction: 1.5)))
+    
+    world.add(Sphere(center: Point(x: -4, y: 1, z: 0), radius: 1.0, material: Lambertian(albedo: Color(r: 0.4, g: 0.2, b: 0.1))))
+
+    world.add(Sphere(center: Point(x: 4, y: 1, z: 0), radius: 1.0, material: Metal(albedo: Color(r: 0.7, g: 0.6, b: 0.5), fuzz: 0)))
+    
+    return world
+}
 
 //
 // Get the color for a given ray
@@ -28,26 +74,17 @@ func rayColor(ray: Ray, world: Hittable, depth: Int) -> Color {
     if depth <= 0 {
         return Color(r: 0, g: 0, b: 0)
     }
-    
+
     // Use tmin=0.001 to solve "Acne" problem
-    if let hitRecord = world.hit(ray: ray, tmin: 0.001, tmax: .infinity) {
+    if let hit = world.hit(ray: ray, tmin: 0.001, tmax: .infinity) {
         
-        if let (attenuation, scattered) = hitRecord.material.scatter(rayIn: ray, rec: hitRecord) {
+        if let (attenuation, scattered) = hit.material.scatter(ray: ray, hit: hit) {
             return attenuation * rayColor(ray: scattered, world: world, depth: depth - 1)
         } else {
             return Color(r: 0, g: 0, b: 0)
         }
-        
-//        //
-//        // Three different methods for computing the target
-//        //
-//        //let target = hitRecord.point + hitRecord.normal + Vec.getRandomInUnitSphere()
-//        let target = hitRecord.point + hitRecord.normal + Vec.getRandomUnitVector()
-//        //let target = hitRecord.point + Vec.getRandomInHemisphere(normal: hitRecord.normal)
-//
-//        let newRay = Ray(origin: hitRecord.point, direction: target - hitRecord.point)
-//        return 0.5 * rayColor(ray: newRay, world: world, depth: depth - 1)
     }
+    
     let unitDirection = ray.direction.getUnit()
     let t = 0.5 * (unitDirection.y + 1)
     return (1 - t) * Color(r: 1, g: 1, b: 1) + t * Color(r: 0.5, g: 0.7, b: 1)
@@ -65,10 +102,10 @@ let maxBounceDepthCL = CommandLine.argc > 2 ? Int(CommandLine.arguments[2]) : ni
 //
 
 let ASPECT_RATIO = 16.0 / 9.0
-let IMAGE_WIDTH = 400
+let IMAGE_WIDTH = 800
 let IMAGE_HEIGHT = Int(Scalar(IMAGE_WIDTH) / ASPECT_RATIO)
 
-let SAMPLES_PER_PIXEL = samplesPerPixelCL ?? 100
+let SAMPLES_PER_PIXEL = samplesPerPixelCL ?? 500
 let MAX_BOUNCE_DEPTH = maxBounceDepthCL ?? 50
 
 
@@ -76,23 +113,20 @@ let MAX_BOUNCE_DEPTH = maxBounceDepthCL ?? 50
 // Camera Settings
 //
 
-let camera = Camera()
+let lookfrom = Vec(x: 13, y: 2, z: 3)
+let lookat = Vec(x: 0, y: 0, z: 0)
+let vup = Vec(i: 0, j: 1, k: 0)
+let vfov = 20.0
+let distToFocus = 10.0
+let aperture = 0.1
+
+let camera = Camera(lookfrom: lookfrom, lookat: lookat, vup: vup, vfov: vfov, aspectRatio: ASPECT_RATIO, aperture: aperture, focusDist: distToFocus)
 
 //
 // World Settings
 //
 
-let materialGround = Lambertian(albedo: Color(r: 0.8, g: 0.8, b: 0.0))
-let materialCenter = Lambertian(albedo: Color(r: 0.1, g: 0.2, b: 0.5))
-let materialLeft = Dielectric(indexOfRefraction: 1.1)
-let materialRight = Metal(albedo: Color(r: 0.8, g: 0.6, b: 0.2), fuzz: 0.0)
-
-var world = HittableList()
-world.add(hittableItem: Sphere(center: Point(x: 0, y: -100.5, z: -1), radius: 100, material: materialGround))
-world.add(hittableItem: Sphere(center: Point(x: 0, y: 0, z: -1), radius: 0.5, material: materialCenter))
-world.add(hittableItem: Sphere(center: Point(x: -1, y: 0, z: -1), radius: 0.5, material: materialLeft))
-//world.add(hittableItem: Sphere(center: Point(x: -1, y: 0, z: -1), radius: -0.4, material: materialLeft))
-world.add(hittableItem: Sphere(center: Point(x: 1, y: 0, z: -1), radius: 0.5, material: materialRight))
+var world = generateRandomScene()
 
 //
 // Render Image
@@ -113,17 +147,18 @@ for j in stride(from: IMAGE_HEIGHT-1, through: 0, by: -1) {
             let r2 = Scalar.random(in: 0 ..< 1)
             let u = (Scalar(i) + r1) / Scalar(IMAGE_WIDTH - 1)
             let v = (Scalar(j) + r2) / Scalar(IMAGE_HEIGHT - 1)
-            let ray = camera.getRay(u: u, v: v)
+            let ray = camera.getRay(u, v)
             pixelColor += rayColor(ray: ray, world: world, depth: MAX_BOUNCE_DEPTH)
         }
 
         // Average colors over samples and then gammar-correct wih gamma=2
         let correctedColor = Color(
-            r: (pixelColor.r / Scalar(SAMPLES_PER_PIXEL)).squareRoot(),
-            g: (pixelColor.g / Scalar(SAMPLES_PER_PIXEL)).squareRoot(),
-            b: (pixelColor.b / Scalar(SAMPLES_PER_PIXEL)).squareRoot()
+            r: sqrt(pixelColor.r / Scalar(SAMPLES_PER_PIXEL)),
+            g: sqrt(pixelColor.g / Scalar(SAMPLES_PER_PIXEL)),
+            b: sqrt(pixelColor.b / Scalar(SAMPLES_PER_PIXEL))
         )
         print(correctedColor.toString255())
+//        exit(0)
     }
 }
 
