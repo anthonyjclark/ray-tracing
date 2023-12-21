@@ -102,7 +102,7 @@ let maxBounceDepthCL = CommandLine.argc > 2 ? Int(CommandLine.arguments[2]) : ni
 //
 
 let ASPECT_RATIO = 16.0 / 9.0
-let IMAGE_WIDTH = 800
+let IMAGE_WIDTH = 400//800
 let IMAGE_HEIGHT = Int(Scalar(IMAGE_WIDTH) / ASPECT_RATIO)
 
 let SAMPLES_PER_PIXEL = samplesPerPixelCL ?? 500
