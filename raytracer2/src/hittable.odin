@@ -72,7 +72,7 @@ HitRecord :: struct {
 
 create_hit_record :: proc(p: Point, n: Vector, t: Scalar, front_face: bool) -> HitRecord {
 
-	return HitRecord{p, front_face ? n : -n, t, front_face}
+	return HitRecord{point = p, normal = front_face ? n : -n, t = t, front_face = front_face}
 
 }
 
