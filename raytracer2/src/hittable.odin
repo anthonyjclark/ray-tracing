@@ -1,6 +1,36 @@
 package main
 
+import "core:fmt"
 import "core:math"
+
+Hittables :: struct {
+	spheres: [dynamic]Sphere,
+}
+
+hit :: proc {
+	hit_hittables,
+	hit_sphere,
+}
+
+hit_hittables :: proc(h: Hittables, r: Ray, t_min, t_max: Scalar) -> Maybe(HitRecord) {
+
+	closest_so_far := t_max
+	closest_hit: Maybe(HitRecord) = nil
+
+	for s in h.spheres {
+
+		hit, ok := hit(s, r, t_min, closest_so_far).?
+
+		if ok {
+			closest_so_far = hit.t
+			closest_hit = hit
+		}
+
+	}
+
+	return closest_hit
+
+}
 
 HitRecord :: struct {
 	point:      Point,
@@ -20,7 +50,7 @@ Sphere :: struct {
 	radius: Scalar,
 }
 
-hit :: proc(s: Sphere, r: Ray, t_min, t_max: Scalar) -> Maybe(HitRecord) {
+hit_sphere :: proc(s: Sphere, r: Ray, t_min, t_max: Scalar) -> Maybe(HitRecord) {
 
 	oc := Vector(r.origin - s.center)
 

@@ -3,37 +3,15 @@ package main
 import "core:fmt"
 import "core:math"
 
-hit_sphere :: proc(center: Point, radius: Scalar, r: Ray) -> Scalar {
 
-	oc := Vector(r.origin - center)
+ray_color :: proc(r: Ray, all_objects: Hittables) -> Color {
 
-	a := length_squared(r.direction)
-	half_b := dot(oc, r.direction)
-	c := length_squared(oc) - radius * radius
+	// TODO: would be better to use Scalar.INF
+	rec, ok := hit(all_objects, r, 0.0, math.INF_F64).?
 
-	discriminant := half_b * half_b - a * c
+	if ok {
 
-	if discriminant < 0 {
-
-		return -1.0
-
-	} else {
-
-		return (-half_b - math.sqrt(discriminant)) / a
-
-	}
-
-}
-
-ray_color :: proc(r: Ray) -> Color {
-
-	t := hit_sphere(Point{0.0, 0.0, -1.0}, 0.5, r)
-
-	if t > 0.0 {
-
-		N := unit(Vector(at(r, t) - Point{0.0, 0.0, -1.0}))
-
-		return 0.5 * Color{N.x + 1.0, N.y + 1.0, N.z + 1.0}
+		return 0.5 * (Color(rec.normal) + Color{1.0, 1.0, 1.0})
 
 	}
 
@@ -52,6 +30,12 @@ main :: proc() {
 
 	image_width :: 400
 	image_height :: int(image_width / aspect_ration)
+
+	// World
+
+	all_objects := Hittables{}
+	append(&all_objects.spheres, Sphere{Point{0.0, 0.0, -1.0}, 0.5})
+	append(&all_objects.spheres, Sphere{Point{0.0, -100.5, -1.0}, 100.0})
 
 	// Camera
 
@@ -104,7 +88,7 @@ main :: proc() {
 
 			r := Ray{camera_center, ray_direction}
 
-			pixel_color := ray_color(r)
+			pixel_color := ray_color(r, all_objects)
 
 			writeColor(pixel_color)
 
