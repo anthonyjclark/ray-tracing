@@ -74,3 +74,33 @@ writeColor :: proc(c: Color) {
 	fmt.println(ir, ig, ib)
 
 }
+
+// ----------------------------------------------------------------
+//  ▄▄▄                               ▗▄▖
+//  ▀█▀       ▐▌                      ▝▜▌
+//   █  ▐▙██▖▐███  ▟█▙  █▟█▌▐▙ ▟▌ ▟██▖ ▐▌
+//   █  ▐▛ ▐▌ ▐▌  ▐▙▄▟▌ █▘   █ █  ▘▄▟▌ ▐▌
+//   █  ▐▌ ▐▌ ▐▌  ▐▛▀▀▘ █    ▜▄▛ ▗█▀▜▌ ▐▌
+//  ▄█▄ ▐▌ ▐▌ ▐▙▄ ▝█▄▄▌ █    ▐█▌ ▐▙▄█▌ ▐▙▄
+//  ▀▀▀ ▝▘ ▝▘  ▀▀  ▝▀▀  ▀     ▀   ▀▀▝▘  ▀▀
+// ----------------------------------------------------------------
+
+Interval :: struct {
+	min, max: Scalar,
+}
+
+contains :: proc(i: Interval, v: Scalar) -> bool {
+
+	return i.min <= v && v <= i.max
+
+}
+
+surrounds :: proc(i: Interval, v: Scalar) -> bool {
+
+	return i.min < v && v < i.max
+
+}
+
+// TODO: use Scalar infinity instead of math.INF_F64
+EMPTY :: Interval{math.INF_F64, math.NEG_INF_F64}
+UNIVERSE :: Interval{math.NEG_INF_F64, math.INF_F64}

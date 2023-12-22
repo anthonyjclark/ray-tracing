@@ -3,23 +3,44 @@ package main
 import "core:fmt"
 import "core:math"
 
-Hittables :: struct {
-	spheres: [dynamic]Sphere,
-}
+// ----------------------------------------------------------------
+//  ▗▄▖                ▗▄▖               ▗▖  █
+//  █▀█                ▝▜▌               ▐▌  ▀
+// ▐▌ ▐▌▐▙ ▟▌ ▟█▙  █▟█▌ ▐▌   ▟█▙  ▟██▖ ▟█▟▌ ██  ▐▙██▖ ▟█▟▌
+// ▐▌ ▐▌ █ █ ▐▙▄▟▌ █▘   ▐▌  ▐▛ ▜▌ ▘▄▟▌▐▛ ▜▌  █  ▐▛ ▐▌▐▛ ▜▌
+// ▐▌ ▐▌ ▜▄▛ ▐▛▀▀▘ █    ▐▌  ▐▌ ▐▌▗█▀▜▌▐▌ ▐▌  █  ▐▌ ▐▌▐▌ ▐▌
+//  █▄█  ▐█▌ ▝█▄▄▌ █    ▐▙▄ ▝█▄█▘▐▙▄█▌▝█▄█▌▗▄█▄▖▐▌ ▐▌▝█▄█▌
+//  ▝▀▘   ▀   ▝▀▀  ▀     ▀▀  ▝▀▘  ▀▀▝▘ ▝▀▝▘▝▀▀▀▘▝▘ ▝▘ ▞▀▐▌
+//                                                    ▜█▛▘
+// ----------------------------------------------------------------
 
 hit :: proc {
 	hit_hittables,
 	hit_sphere,
 }
 
-hit_hittables :: proc(h: Hittables, r: Ray, t_min, t_max: Scalar) -> Maybe(HitRecord) {
+// ----------------------------------------------------------------
+// ▗▖ ▗▖  █            ▗▖   ▗▖   ▗▄▖
+// ▐▌ ▐▌  ▀   ▐▌       ▐▌   ▐▌   ▝▜▌
+// ▐▌ ▐▌ ██  ▐███  ▟██▖▐▙█▙ ▐▙█▙  ▐▌   ▟█▙ ▗▟██▖
+// ▐███▌  █   ▐▌   ▘▄▟▌▐▛ ▜▌▐▛ ▜▌ ▐▌  ▐▙▄▟▌▐▙▄▖▘
+// ▐▌ ▐▌  █   ▐▌  ▗█▀▜▌▐▌ ▐▌▐▌ ▐▌ ▐▌  ▐▛▀▀▘ ▀▀█▖
+// ▐▌ ▐▌▗▄█▄▖ ▐▙▄ ▐▙▄█▌▐█▄█▘▐█▄█▘ ▐▙▄ ▝█▄▄▌▐▄▄▟▌
+// ▝▘ ▝▘▝▀▀▀▘  ▀▀  ▀▀▝▘▝▘▀▘ ▝▘▀▘   ▀▀  ▝▀▀  ▀▀▀
+// ----------------------------------------------------------------
 
-	closest_so_far := t_max
+Hittables :: struct {
+	spheres: [dynamic]Sphere,
+}
+
+hit_hittables :: proc(h: Hittables, r: Ray, ray_t: Interval) -> Maybe(HitRecord) {
+
+	closest_so_far := ray_t.max
 	closest_hit: Maybe(HitRecord) = nil
 
 	for s in h.spheres {
 
-		hit, ok := hit(s, r, t_min, closest_so_far).?
+		hit, ok := hit(s, r, Interval{ray_t.min, closest_so_far}).?
 
 		if ok {
 			closest_so_far = hit.t
@@ -31,6 +52,16 @@ hit_hittables :: proc(h: Hittables, r: Ray, t_min, t_max: Scalar) -> Maybe(HitRe
 	return closest_hit
 
 }
+
+// ----------------------------------------------------------------
+// ▗▖ ▗▖  █            ▗▄▄▖                        ▗▖
+// ▐▌ ▐▌  ▀   ▐▌       ▐▛▀▜▌                       ▐▌
+// ▐▌ ▐▌ ██  ▐███      ▐▌ ▐▌ ▟█▙  ▟██▖ ▟█▙  █▟█▌ ▟█▟▌
+// ▐███▌  █   ▐▌       ▐███ ▐▙▄▟▌▐▛  ▘▐▛ ▜▌ █▘  ▐▛ ▜▌
+// ▐▌ ▐▌  █   ▐▌       ▐▌▝█▖▐▛▀▀▘▐▌   ▐▌ ▐▌ █   ▐▌ ▐▌
+// ▐▌ ▐▌▗▄█▄▖ ▐▙▄      ▐▌ ▐▌▝█▄▄▌▝█▄▄▌▝█▄█▘ █   ▝█▄█▌
+// ▝▘ ▝▘▝▀▀▀▘  ▀▀      ▝▘ ▝▀ ▝▀▀  ▝▀▀  ▝▀▘  ▀    ▝▀▝▘
+// ----------------------------------------------------------------
 
 HitRecord :: struct {
 	point:      Point,
@@ -45,12 +76,23 @@ create_hit_record :: proc(p: Point, n: Vector, t: Scalar, front_face: bool) -> H
 
 }
 
+// ----------------------------------------------------------------
+//  ▗▄▖      ▗▖
+// ▗▛▀▜      ▐▌
+// ▐▙   ▐▙█▙ ▐▙██▖ ▟█▙  █▟█▌ ▟█▙
+//  ▜█▙ ▐▛ ▜▌▐▛ ▐▌▐▙▄▟▌ █▘  ▐▙▄▟▌
+//    ▜▌▐▌ ▐▌▐▌ ▐▌▐▛▀▀▘ █   ▐▛▀▀▘
+// ▐▄▄▟▘▐█▄█▘▐▌ ▐▌▝█▄▄▌ █   ▝█▄▄▌
+//  ▀▀▘ ▐▌▀▘ ▝▘ ▝▘ ▝▀▀  ▀    ▝▀▀
+//      ▐▌
+// ----------------------------------------------------------------
+
 Sphere :: struct {
 	center: Point,
 	radius: Scalar,
 }
 
-hit_sphere :: proc(s: Sphere, r: Ray, t_min, t_max: Scalar) -> Maybe(HitRecord) {
+hit_sphere :: proc(s: Sphere, r: Ray, ray_t: Interval) -> Maybe(HitRecord) {
 
 	oc := Vector(r.origin - s.center)
 
@@ -66,11 +108,11 @@ hit_sphere :: proc(s: Sphere, r: Ray, t_min, t_max: Scalar) -> Maybe(HitRecord) 
 
 	root := (-half_b - sqrtd) / a
 
-	if root <= t_min || t_max <= root {
+	if !surrounds(ray_t, root) {
 
 		root := (-half_b + sqrtd) / a
 
-		if root <= t_min || t_max <= root do return nil
+		if !surrounds(ray_t, root) do return nil
 
 	}
 

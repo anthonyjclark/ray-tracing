@@ -7,7 +7,7 @@ import "core:math"
 ray_color :: proc(r: Ray, all_objects: Hittables) -> Color {
 
 	// TODO: would be better to use Scalar.INF
-	rec, ok := hit(all_objects, r, 0.0, math.INF_F64).?
+	rec, ok := hit(all_objects, r, Interval{0.0, math.INF_F64}).?
 
 	if ok {
 
