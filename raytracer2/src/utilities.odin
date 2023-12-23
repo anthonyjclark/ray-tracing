@@ -57,6 +57,13 @@ unit :: proc(v: Vector) -> Vector {
 
 }
 
+near_zero :: proc(v: Vector) -> bool {
+
+	s := 1e-8
+	return math.abs(v.x) < s && math.abs(v.y) < s && math.abs(v.z) < s
+
+}
+
 rand_vector :: proc {
 	rand_vector_uniform,
 	rand_vector_interval,
@@ -99,6 +106,12 @@ rand_vector_on_hemisphere :: proc(normal: Vector) -> Vector {
 
 	on_unit_sphere := rand_unit_vector()
 	return dot(on_unit_sphere, normal) > 0.0 ? on_unit_sphere : -on_unit_sphere
+
+}
+
+reflect :: proc(v: Vector, n: Vector) -> Vector {
+
+	return v - 2.0 * dot(v, n) * n
 
 }
 

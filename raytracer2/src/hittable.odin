@@ -66,13 +66,28 @@ hit_hittables :: proc(h: Hittables, r: Ray, ray_t: Interval) -> Maybe(HitRecord)
 HitRecord :: struct {
 	point:      Point,
 	normal:     Vector,
+	material:   Material,
 	t:          Scalar,
 	front_face: bool,
 }
 
-create_hit_record :: proc(p: Point, n: Vector, t: Scalar, front_face: bool) -> HitRecord {
+create_hit_record :: proc(
+	p: Point,
+	n: Vector,
+	t: Scalar,
+	mat: Material,
+	front_face: bool,
+) -> HitRecord {
 
-	return HitRecord{point = p, normal = front_face ? n : -n, t = t, front_face = front_face}
+	return(
+		HitRecord {
+			point = p,
+			normal = front_face ? n : -n,
+			t = t,
+			material = mat,
+			front_face = front_face,
+		} \
+	)
 
 }
 
@@ -88,8 +103,9 @@ create_hit_record :: proc(p: Point, n: Vector, t: Scalar, front_face: bool) -> H
 // ----------------------------------------------------------------
 
 Sphere :: struct {
-	center: Point,
-	radius: Scalar,
+	center:   Point,
+	radius:   Scalar,
+	material: Material,
 }
 
 hit_sphere :: proc(s: Sphere, r: Ray, ray_t: Interval) -> Maybe(HitRecord) {
@@ -120,6 +136,6 @@ hit_sphere :: proc(s: Sphere, r: Ray, ray_t: Interval) -> Maybe(HitRecord) {
 	outward_normal := Vector((hit_loc - s.center) / s.radius)
 	front_face := dot(r.direction, outward_normal) < 0
 
-	return create_hit_record(hit_loc, outward_normal, root, front_face)
+	return create_hit_record(hit_loc, outward_normal, root, s.material, front_face)
 
 }
