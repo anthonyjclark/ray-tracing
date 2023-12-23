@@ -114,10 +114,20 @@ rand_vector_on_hemisphere :: proc(normal: Vector) -> Vector {
 
 Color :: distinct [3]Scalar
 
+linear_to_gamma :: proc(linear: Scalar) -> Scalar {
+
+	return math.sqrt(linear)
+
+}
+
 writeColor :: proc(c: Color, samples_per_pixel: int) {
 
 	scale := 1.0 / Scalar(samples_per_pixel)
 	scaled_c := c * scale
+
+	scaled_c.r = linear_to_gamma(scaled_c.r)
+	scaled_c.g = linear_to_gamma(scaled_c.g)
+	scaled_c.b = linear_to_gamma(scaled_c.b)
 
 	intensity := Interval{0.0, 0.999}
 
